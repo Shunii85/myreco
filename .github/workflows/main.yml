@@ -56,6 +56,8 @@ jobs:
           echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/firebase-key.json" >> $GITHUB_ENV
       - name: change space
         run: ./node_modules/.bin/firebase use ${{ secrets.FIREBASE_PROJECT_ID }}
+      - name: Display directory structue
+        run: ls -l
       - name: Deploy to Firebase Hosting
         run: |
           ./node_modules/.bin/firebase deploy
