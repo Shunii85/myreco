@@ -55,6 +55,9 @@ jobs:
         run: npm install
       - name: Run build
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       - name: Install firebase-tools
         run: npm install --save-dev firebase-tools
       - name: Decode Firebase service account key
@@ -69,8 +72,6 @@ jobs:
         run: |
           ./node_modules/.bin/firebase deploy
         env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks
 
