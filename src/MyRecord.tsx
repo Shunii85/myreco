@@ -19,7 +19,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { getAllRecords } from "./utils/supabaseFunctions";
 
 //学習内容と学習時間をもつ学習記録クラス
@@ -70,9 +70,13 @@ export const MyRecord: FC = () => {
           p={6}
         >
           {records.map((record) => (
-            <>
-              <Flex justifyItems={"center"} alignItems={"center"}>
-                <ListItem key={record.id} fontSize={"28px"}>
+            <Fragment key={record.id}>
+              <Flex
+                justifyItems={"center"}
+                alignItems={"center"}
+                key={record.id}
+              >
+                <ListItem fontSize={"28px"}>
                   {record.title}: {record.time}時間
                 </ListItem>
                 <Spacer />
@@ -80,7 +84,7 @@ export const MyRecord: FC = () => {
                 <Button ml={4}>Delete</Button>
               </Flex>
               <Divider />
-            </>
+            </Fragment>
           ))}
         </UnorderedList>
       </Center>
