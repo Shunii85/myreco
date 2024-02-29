@@ -1,9 +1,12 @@
-import { render, screen } from "@testing-library/react";
-import App from "../App";
+import { render, screen, waitFor } from "@testing-library/react";
+import { MyRecord } from "../MyRecord";
 
 describe("title", () => {
-  it("should render title", () => {
-    render(<App />);
-    expect(screen.getByText("マイレコ")).toBeInTheDocument();
+  it("should render title", async () => {
+    render(<MyRecord />);
+
+    await waitFor(() => {
+      expect(screen.getByText("マイレコ")).toBeInTheDocument();
+    });
   });
 });
