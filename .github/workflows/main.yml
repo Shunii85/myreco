@@ -37,7 +37,7 @@ jobs:
         run: npm test
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_KEY }}
+          VITE_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
   deploy:
     name: deploy
@@ -71,6 +71,8 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
       - name: delete GOOGLE_APPLICATION_CREDENTIALS
         run: rm $GOOGLE_APPLICATION_CREDENTIALS
