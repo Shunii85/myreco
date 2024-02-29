@@ -65,6 +65,8 @@ jobs:
         run: ./node_modules/.bin/firebase use ${{ secrets.FIREBASE_PROJECT_ID }}
       - name: Display directory structue
         run: ls -l
+      - name: Display environment variables
+        run: printenv VITE_SUPABASE_URL VITE_SUPABASE_KEY
       - name: Deploy to Firebase Hosting
         run: |
           ./node_modules/.bin/firebase deploy
