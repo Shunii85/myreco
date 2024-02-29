@@ -74,7 +74,7 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks
       - name: Display environment variables
-        run: printenv VITE_SUPABASE_URL VITE_SUPABASE_KEY
+        run: env
 
       - name: delete GOOGLE_APPLICATION_CREDENTIALS
         run: rm $GOOGLE_APPLICATION_CREDENTIALS
