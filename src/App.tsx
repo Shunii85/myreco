@@ -1,12 +1,11 @@
-import { ChakraProvider } from "@chakra-ui/react";
 import { MyRecord } from "./MyRecord";
-import { theme } from "./theme/theme";
+import { Chakra } from "./providers/Chakra";
 
 function App() {
   return (
-    <ChakraProvider theme={theme}>
+    <Chakra>
       <MyRecord />
-    </ChakraProvider>
+    </Chakra>
   );
 }
 

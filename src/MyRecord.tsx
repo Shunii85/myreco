@@ -4,7 +4,12 @@ import {
   Center,
   Divider,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
+  IconButton,
+  Image,
   Input,
   ListItem,
   Modal,
@@ -16,18 +21,35 @@ import {
   ModalOverlay,
   Spacer,
   Spinner,
+  TagLabel,
+  Text,
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FC, Fragment, useEffect, useState } from "react";
-import { getAllRecords } from "./utils/supabaseFunctions";
+import { FC, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { addRecords, getAllRecords } from "./utils/supabaseFunctions";
 import { Record } from "./domain/record";
+import { FaRegEdit } from "react-icons/fa";
+import { IconContext } from "react-icons/lib";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 export const MyRecord: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data: { title: string; time: number }) => {
+    const record = await addRecords(data.title, data.time);
+    setRecords([...records, ...record]);
+    onClose();
+  };
 
   useEffect(() => {
     const getRecords = async () => {
@@ -38,6 +60,7 @@ export const MyRecord: FC = () => {
     };
     getRecords();
   }, []);
+
   return loading ? (
     <Center h={"100vh"}>
       <Spinner
@@ -49,13 +72,22 @@ export const MyRecord: FC = () => {
       />
     </Center>
   ) : (
-    <Box mx={"15vw"}>
-      <Center m={10} display={"flex"} flexDirection={"column"}>
-        <Heading>マイレコ</Heading>
+    <Box>
+      <Center mt={10} mb={6} display={"flex"} flexDirection={"column"}>
+        <Heading as={"h1"} color={"orange"}>
+          マイレコ
+        </Heading>
       </Center>
-      <Button onClick={onOpen} colorScheme="teal">
-        Open Modal
-      </Button>
+      <Center mb={4}>
+        <Button
+          onClick={onOpen}
+          bg={"#ffba1a"}
+          color={"white"}
+          _hover={{ opacity: "0.6" }}
+        >
+          New
+        </Button>
+      </Center>
       <Center>
         <UnorderedList
           bg={"white"}
@@ -64,23 +96,33 @@ export const MyRecord: FC = () => {
           borderRadius={"1em"}
           w={"700px"}
           p={6}
+          m={0}
         >
           {records.map((record) => (
-            <Fragment key={record.id}>
-              <Flex
-                justifyItems={"center"}
-                alignItems={"center"}
-                key={record.id}
-              >
-                <ListItem fontSize={"28px"}>
-                  {record.title}: {record.time}時間
-                </ListItem>
+            <ListItem fontSize={"28px"} key={record.id}>
+              <Flex>
+                <Flex mb={4} alignItems={"center"}>
+                  <Image
+                    src={"./public/orangeNew.png"}
+                    alt={"logo"}
+                    w={"60px"}
+                    borderRadius={"50%"}
+                  />
+                  <Text>{record.title}</Text>
+                </Flex>
                 <Spacer />
-                <Button>Edit</Button>
-                <Button ml={4}>Delete</Button>
+                <Text mr={6}>{record.time}時間</Text>
+                <IconContext.Provider value={{ size: "1.5em" }}>
+                  <IconButton aria-label="edit" icon={<FaRegEdit />} />
+                  <IconButton
+                    aria-label="delete"
+                    ml={4}
+                    icon={<RiDeleteBin5Line />}
+                  />
+                </IconContext.Provider>
               </Flex>
               <Divider />
-            </Fragment>
+            </ListItem>
           ))}
         </UnorderedList>
       </Center>
@@ -88,18 +130,56 @@ export const MyRecord: FC = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add New Record</ModalHeader>
+          <ModalHeader display={"flex"} alignItems={"center"}>
+            <Image
+              src={"./public/orangeNew.png"}
+              alt={"logo"}
+              w={"60px"}
+              borderRadius={"50%"}
+            />
+            Add New Record
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <Input placeholder="学習内容" />
-          </ModalBody>
+          <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+            <ModalBody>
+              <FormControl>
+                <FormLabel htmlFor="title">Title</FormLabel>
+                <Input
+                  id="title"
+                  placeholder="Title"
+                  {...register("title", { required: true })}
+                  type="text"
+                />
+                <FormErrorMessage>
+                  {errors.title && "Title is required"}
+                </FormErrorMessage>
+                <FormLabel htmlFor="time">Time</FormLabel>
+                <Input
+                  id="time"
+                  placeholder="Time"
+                  {...register("time", { required: true })}
+                  type="number"
+                />
+                <FormErrorMessage>
+                  {errors.time && "Time is required"}
+                </FormErrorMessage>
+              </FormControl>
+            </ModalBody>
 
-          <ModalFooter>
-            <Button>Save</Button>
-            <Button colorScheme="blue" mr={3} ml={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
+            <ModalFooter>
+              <Button
+                bg={"#ffba1a"}
+                color={"white"}
+                _hover={{ opacity: "0.6" }}
+                type="submit"
+              >
+                Create
+              </Button>
+              <Button mr={3} ml={3} onClick={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </Box>

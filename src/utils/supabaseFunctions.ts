@@ -7,6 +7,26 @@ export const getAllRecords = async (): Promise<Record[]> => {
     throw new Error(error.message);
   }
 
+  if (!data) return [];
+  const record = data.map((record) => {
+    return new Record(record.id, record.title, record.time);
+  });
+
+  return record;
+};
+
+export const addRecords = async (
+  title: string,
+  time: number
+): Promise<Record[]> => {
+  const { data, error } = await supabase
+    .from("study-record")
+    .insert([{ title, time }])
+    .select();
+  if (error) {
+    throw new Error(error.message);
+  }
+
   const record = data.map((record) => {
     return new Record(record.id, record.title, record.time);
   });
