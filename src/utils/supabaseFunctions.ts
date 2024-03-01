@@ -1,4 +1,4 @@
-import { Record } from "../MyRecord";
+import { Record } from "../domain/record";
 import { supabase } from "./supabase";
 
 export const getAllRecords = async (): Promise<Record[]> => {
@@ -7,5 +7,9 @@ export const getAllRecords = async (): Promise<Record[]> => {
     throw new Error(error.message);
   }
 
-  return data;
+  const record = data.map((record) => {
+    return new Record(record.id, record.title, record.time);
+  });
+
+  return record;
 };
