@@ -21,11 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { FC, Fragment, useEffect, useState } from "react";
 import { getAllRecords } from "./utils/supabaseFunctions";
-
-//学習内容と学習時間をもつ学習記録クラス
-export class Record {
-  constructor(public id: string, public title: string, public time: string) {}
-}
+import { Record } from "./domain/record";
 
 export const MyRecord: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
