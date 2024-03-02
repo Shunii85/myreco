@@ -21,7 +21,6 @@ import {
   ModalOverlay,
   Spacer,
   Spinner,
-  TagLabel,
   Text,
   UnorderedList,
   useDisclosure,
@@ -34,6 +33,11 @@ import { FaRegEdit } from "react-icons/fa";
 import { IconContext } from "react-icons/lib";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
+type formInputs = {
+  title: string;
+  time: number;
+};
+
 export const MyRecord: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -43,12 +47,14 @@ export const MyRecord: FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+    reset,
+  } = useForm<formInputs>();
 
-  const onSubmit = async (data: { title: string; time: number }) => {
+  const onSubmit = async (data: any) => {
     const record = await addRecords(data.title, data.time);
     setRecords([...records, ...record]);
     onClose();
+    reset();
   };
 
   useEffect(() => {
@@ -94,14 +100,20 @@ export const MyRecord: FC = () => {
           spacing={4}
           listStyleType={"none"}
           borderRadius={"1em"}
-          w={"700px"}
+          w={{
+            base: "80vw",
+            md: "70vw",
+            lg: "60vw",
+            xl: "50vw",
+            "2xl": "40vw",
+          }}
           p={6}
           m={0}
         >
           {records.map((record) => (
             <ListItem fontSize={"28px"} key={record.id}>
-              <Flex>
-                <Flex mb={4} alignItems={"center"}>
+              <Flex alignItems={"center"} mb={4}>
+                <Flex alignItems={"center"}>
                   <Image
                     src={"./public/orangeNew.png"}
                     alt={"logo"}
@@ -140,28 +152,33 @@ export const MyRecord: FC = () => {
             Add New Record
           </ModalHeader>
           <ModalCloseButton />
-          <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody>
-              <FormControl>
+              <FormControl isInvalid={Boolean(errors.title)}>
                 <FormLabel htmlFor="title">Title</FormLabel>
                 <Input
                   id="title"
                   placeholder="Title"
-                  {...register("title", { required: true })}
-                  type="text"
+                  defaultValue={""}
+                  autoComplete="off"
+                  {...register("title", { required: "内容の入力は必須です。" })}
                 />
                 <FormErrorMessage>
-                  {errors.title && "Title is required"}
+                  {errors.title && errors.title.message}
                 </FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={Boolean(errors.time)}>
                 <FormLabel htmlFor="time">Time</FormLabel>
                 <Input
                   id="time"
                   placeholder="Time"
-                  {...register("time", { required: true })}
+                  {...register("time", { required: "時間の入力は必須です。" })}
                   type="number"
+                  defaultValue={""}
+                  autoComplete="off"
                 />
                 <FormErrorMessage>
-                  {errors.time && "Time is required"}
+                  {errors.time && errors.time.message}
                 </FormErrorMessage>
               </FormControl>
             </ModalBody>
@@ -175,7 +192,10 @@ export const MyRecord: FC = () => {
               >
                 Create
               </Button>
-              <Button mr={3} ml={3} onClick={onClose}>
+              <Button onClick={() => reset()} ml={3}>
+                Reset
+              </Button>
+              <Button ml={3} onClick={onClose}>
                 Cancel
               </Button>
             </ModalFooter>
