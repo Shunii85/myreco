@@ -115,7 +115,7 @@ export const MyRecord: FC = () => {
               <Flex alignItems={"center"} mb={4}>
                 <Flex alignItems={"center"}>
                   <Image
-                    src={"./public/orangeNew.png"}
+                    src={"orangeNew.png"}
                     alt={"logo"}
                     w={"60px"}
                     borderRadius={"50%"}
@@ -144,7 +144,7 @@ export const MyRecord: FC = () => {
         <ModalContent>
           <ModalHeader display={"flex"} alignItems={"center"}>
             <Image
-              src={"./public/orangeNew.png"}
+              src={"orangeNew.png"}
               alt={"logo"}
               w={"60px"}
               borderRadius={"50%"}
