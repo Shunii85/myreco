@@ -90,6 +90,7 @@ export const MyRecord: FC = () => {
           bg={"#ffba1a"}
           color={"white"}
           _hover={{ opacity: "0.6" }}
+          data-testid="open-modal"
         >
           New
         </Button>
@@ -109,6 +110,7 @@ export const MyRecord: FC = () => {
           }}
           p={6}
           m={0}
+          data-testid="my-records"
         >
           {records.map((record) => (
             <ListItem fontSize={"28px"} key={record.id}>
@@ -162,6 +164,7 @@ export const MyRecord: FC = () => {
                   defaultValue={""}
                   autoComplete="off"
                   {...register("title", { required: "内容の入力は必須です。" })}
+                  data-testid="title"
                 />
                 <FormErrorMessage>
                   {errors.title && errors.title.message}
@@ -176,6 +179,7 @@ export const MyRecord: FC = () => {
                   type="number"
                   defaultValue={""}
                   autoComplete="off"
+                  data-testid="time"
                 />
                 <FormErrorMessage>
                   {errors.time && errors.time.message}
@@ -189,6 +193,7 @@ export const MyRecord: FC = () => {
                 color={"white"}
                 _hover={{ opacity: "0.6" }}
                 type="submit"
+                data-testid="submit"
               >
                 Create
               </Button>
