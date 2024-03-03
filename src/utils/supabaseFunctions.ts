@@ -40,3 +40,24 @@ export const deleteRecord = async (id: string) => {
     throw new Error(error.message);
   }
 };
+
+export const updateRecord = async (
+  id: string,
+  title: string,
+  time: number
+): Promise<Record[]> => {
+  const { data, error } = await supabase
+    .from("study-record")
+    .update({ title, time })
+    .eq("id", id)
+    .select();
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const record = data.map((record) => {
+    return new Record(record.id, record.title, record.time);
+  });
+
+  return record;
+};

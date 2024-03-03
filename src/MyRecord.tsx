@@ -31,6 +31,7 @@ import {
   addRecords,
   deleteRecord,
   getAllRecords,
+  updateRecord,
 } from "./utils/supabaseFunctions";
 import { Record } from "./domain/record";
 import { FaRegEdit } from "react-icons/fa";
@@ -39,7 +40,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 
 type formInputs = {
   title: string;
-  time: number;
+  time: string;
 };
 
 export const MyRecord: FC = () => {
@@ -47,19 +48,53 @@ export const MyRecord: FC = () => {
 
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(false);
+  //モーダルのモードを管理する。新規登録か編集か
+  const [currentRecord, setCurrentRecord] = useState<Record | null>(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    clearErrors,
   } = useForm<formInputs>();
 
   const onSubmit = async (data: any) => {
-    const record = await addRecords(data.title, data.time);
-    setRecords([...records, ...record]);
+    if (currentRecord) {
+      const updatedRecord = await updateRecord(
+        currentRecord.id,
+        data.title,
+        parseInt(data.time)
+      );
+      setRecords(
+        records.map((record) =>
+          record.id === currentRecord.id ? updatedRecord[0] : record
+        )
+      );
+    } else {
+      const newRecord = await addRecords(data.title, parseInt(data.time));
+      setRecords([...records, newRecord[0]]);
+    }
+
     onClose();
     reset();
+  };
+
+  const openNewModaModal = () => {
+    setCurrentRecord(null);
+    onOpen();
+    reset({
+      title: "",
+      time: "",
+    });
+  };
+
+  const openEditModeModal = (record: Record) => {
+    setCurrentRecord(record);
+    onOpen();
+    reset({
+      title: record.title,
+      time: record.time.toString(),
+    });
   };
 
   const onClickDelete = async (id: string) => {
@@ -79,7 +114,7 @@ export const MyRecord: FC = () => {
   }, []);
 
   return loading ? (
-    <Center h={"100vh"}>
+    <Center h={"100vh"} data-testid="loading">
       <Spinner
         thickness="4px"
         speed="0.65s"
@@ -97,7 +132,7 @@ export const MyRecord: FC = () => {
       </Center>
       <Center mb={4}>
         <Button
-          onClick={onOpen}
+          onClick={openNewModaModal}
           bg={"#ffba1a"}
           color={"white"}
           _hover={{ opacity: "0.6" }}
@@ -124,8 +159,8 @@ export const MyRecord: FC = () => {
           m={0}
           data-testid="my-records"
         >
-          {records.map(({ id, title, time }) => (
-            <ListItem fontSize={"28px"} key={id}>
+          {records.map((record) => (
+            <ListItem fontSize={"28px"} key={record.id}>
               <Flex alignItems={"center"} mb={4}>
                 <Flex alignItems={"center"}>
                   <Image
@@ -134,17 +169,23 @@ export const MyRecord: FC = () => {
                     w={"60px"}
                     borderRadius={"50%"}
                   />
-                  <Text>{title}</Text>
+                  <Text>{record.title}</Text>
                 </Flex>
                 <Spacer />
-                <Text mr={6}>{time}時間</Text>
+                <Text mr={6}>{record.time}時間</Text>
                 <IconContext.Provider value={{ size: "1.5em" }}>
-                  <IconButton aria-label="edit" icon={<FaRegEdit />} />
+                  <IconButton
+                    aria-label="edit"
+                    icon={<FaRegEdit />}
+                    onClick={() => openEditModeModal(record)}
+                    data-testid="edit-button"
+                  />
                   <IconButton
                     aria-label="delete"
                     ml={4}
                     icon={<RiDeleteBin5Line />}
-                    onClick={() => onClickDelete(id)}
+                    onClick={() => onClickDelete(record.id)}
+                    data-testid="delete-button"
                   />
                 </IconContext.Provider>
               </Flex>
@@ -158,21 +199,24 @@ export const MyRecord: FC = () => {
         isOpen={isOpen}
         onClose={() => {
           onClose();
-          clearErrors();
         }}
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader display={"flex"} alignItems={"center"}>
+          <ModalHeader
+            display={"flex"}
+            alignItems={"center"}
+            data-testid="modal-title"
+          >
             <Image
               src={"orangeNew.png"}
               alt={"logo"}
               w={"60px"}
               borderRadius={"50%"}
             />
-            Add New Record
+            {currentRecord ? "記録編集" : "新規登録"}
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton data-testid="modal-close-button" />
           <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody>
               <FormControl isInvalid={Boolean(errors.title)}>
@@ -185,7 +229,7 @@ export const MyRecord: FC = () => {
                   {...register("title", { required: "内容の入力は必須です。" })}
                   data-testid="title"
                 />
-                <FormErrorMessage>
+                <FormErrorMessage data-testid="title-error">
                   {errors.title && errors.title.message}
                 </FormErrorMessage>
               </FormControl>
@@ -196,12 +240,16 @@ export const MyRecord: FC = () => {
                   placeholder="Time"
                   {...register("time", {
                     required: "時間の入力は必須です。",
+                    validate: (value) => {
+                      if (parseInt(value) < 0)
+                        return "0以上の数値を入力してください。";
+                    },
                   })}
                   defaultValue={""}
                   autoComplete="off"
                   data-testid="time"
                 />
-                <FormErrorMessage>
+                <FormErrorMessage data-testid="time-error">
                   {errors.time && errors.time.message}
                 </FormErrorMessage>
               </FormControl>
@@ -215,7 +263,7 @@ export const MyRecord: FC = () => {
                 type="submit"
                 data-testid="submit"
               >
-                Create
+                {currentRecord ? "Update" : "Create"}
               </Button>
               <Button onClick={() => reset()} ml={3}>
                 Reset
