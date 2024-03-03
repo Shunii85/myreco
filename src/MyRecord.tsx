@@ -40,7 +40,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 
 type formInputs = {
   title: string;
-  time: string;
+  time: number;
 };
 
 export const MyRecord: FC = () => {
@@ -48,9 +48,7 @@ export const MyRecord: FC = () => {
 
   const [records, setRecords] = useState<Record[]>([]);
   const [loading, setLoading] = useState(false);
-  //モーダルのモードを管理する。新規登録か編集か
   const [currentRecord, setCurrentRecord] = useState<Record | null>(null);
-
   const {
     register,
     handleSubmit,
@@ -58,49 +56,44 @@ export const MyRecord: FC = () => {
     reset,
   } = useForm<formInputs>();
 
-  const onSubmit = async (data: any) => {
+  const onClickDelete = async (id: string) => {
+    // await deleteRecord(id);;
+    setRecords(records.filter((record) => record.id !== id));
+    deleteRecord(id);
+  };
+
+  const onSubmit = async (data: formInputs) => {
+    const { title, time } = data;
     if (currentRecord) {
-      const updatedRecord = await updateRecord(
-        currentRecord.id,
-        data.title,
-        parseInt(data.time)
-      );
+      const updatedRecord = await updateRecord(currentRecord.id, title, time);
       setRecords(
         records.map((record) =>
           record.id === currentRecord.id ? updatedRecord[0] : record
         )
       );
     } else {
-      const newRecord = await addRecords(data.title, parseInt(data.time));
+      const newRecord = await addRecords(title, time);
       setRecords([...records, newRecord[0]]);
     }
-
     onClose();
     reset();
   };
 
-  const openNewModaModal = () => {
+  const openNewModeModal = () => {
     setCurrentRecord(null);
     onOpen();
     reset({
       title: "",
-      time: "",
+      time: 0,
     });
   };
-
   const openEditModeModal = (record: Record) => {
     setCurrentRecord(record);
     onOpen();
     reset({
       title: record.title,
-      time: record.time.toString(),
+      time: record.time,
     });
-  };
-
-  const onClickDelete = async (id: string) => {
-    // await deleteRecord(id);;
-    setRecords(records.filter((record) => record.id !== id));
-    deleteRecord(id);
   };
 
   useEffect(() => {
@@ -132,7 +125,7 @@ export const MyRecord: FC = () => {
       </Center>
       <Center mb={4}>
         <Button
-          onClick={openNewModaModal}
+          onClick={openNewModeModal}
           bg={"#ffba1a"}
           color={"white"}
           _hover={{ opacity: "0.6" }}
@@ -160,7 +153,7 @@ export const MyRecord: FC = () => {
           data-testid="my-records"
         >
           {records.map((record) => (
-            <ListItem fontSize={"28px"} key={record.id}>
+            <ListItem fontSize={{ base: "16px", md: "24px" }} key={record.id}>
               <Flex alignItems={"center"} mb={4}>
                 <Flex alignItems={"center"}>
                   <Image
@@ -241,8 +234,7 @@ export const MyRecord: FC = () => {
                   {...register("time", {
                     required: "時間の入力は必須です。",
                     validate: (value) => {
-                      if (parseInt(value) < 0)
-                        return "0以上の数値を入力してください。";
+                      return value >= 0 || "0以上の数値を入力してください。";
                     },
                   })}
                   defaultValue={""}
