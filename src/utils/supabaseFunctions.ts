@@ -33,3 +33,10 @@ export const addRecords = async (
 
   return record;
 };
+
+export const deleteRecord = async (id: string) => {
+  const { error } = await supabase.from("study-record").delete().eq("id", id);
+  if (error) {
+    throw new Error(error.message);
+  }
+};
