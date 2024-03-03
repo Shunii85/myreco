@@ -67,8 +67,6 @@ describe("title", () => {
     await userEvent.click(screen.getByTestId("open-modal"));
 
     expect(screen.getByTestId("modal-title")).toHaveTextContent("新規登録");
-
-    await userEvent.click(screen.getByTestId("modal-close-button"));
   });
 
   it("shuold add a new record", async () => {
@@ -96,8 +94,6 @@ describe("title", () => {
       ).toBe(recordsBefore + 1);
       expect(screen.getByText("test title4")).toBeInTheDocument();
     });
-
-    await userEvent.click(screen.getByTestId("modal-close-button"));
   });
 
   it("should appear errors, clicking without text of title", async () => {
@@ -108,16 +104,16 @@ describe("title", () => {
 
     await userEvent.click(screen.getByTestId("open-modal"));
 
+    const titleInput = screen.getByTestId("title");
     const timeInput = screen.getByTestId("time");
     const submitButton = screen.getByTestId("submit");
+    await userEvent.clear(titleInput);
     await userEvent.type(timeInput, "40");
     await userEvent.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByTestId("title-error")).toBeInTheDocument();
     });
-
-    await userEvent.click(screen.getByTestId("modal-close-button"));
   });
 
   it("should appear errors, clicking without text of time", async () => {
@@ -128,11 +124,11 @@ describe("title", () => {
 
     await userEvent.click(screen.getByTestId("open-modal"));
 
-    //timeInputに空文字を入れる
     const titleInput = screen.getByTestId("title");
     const timeInput = screen.getByTestId("time");
     const submitButton = screen.getByTestId("submit");
     await userEvent.type(titleInput, "test title4");
+    await userEvent.clear(timeInput);
     await userEvent.click(submitButton);
 
     await waitFor(() => {
@@ -140,8 +136,6 @@ describe("title", () => {
         "時間の入力は必須です。"
       );
     });
-
-    await userEvent.click(screen.getByTestId("modal-close-button"));
 
     // timeInputに0未満の値を入れる
     await userEvent.click(screen.getByTestId("open-modal"));
@@ -153,8 +147,6 @@ describe("title", () => {
         "0以上の数値を入力してください。"
       );
     });
-
-    await userEvent.click(screen.getByTestId("modal-close-button"));
   });
 
   it("should delete a record", async () => {
@@ -187,8 +179,6 @@ describe("title", () => {
     await waitFor(() => {
       expect(screen.getByTestId("modal-title")).toHaveTextContent("記録編集");
     });
-
-    await userEvent.click(screen.getByTestId("modal-close-button"));
   });
 
   it("should edit a record", async () => {
