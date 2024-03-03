@@ -27,7 +27,11 @@ import {
 } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { addRecords, getAllRecords } from "./utils/supabaseFunctions";
+import {
+  addRecords,
+  deleteRecord,
+  getAllRecords,
+} from "./utils/supabaseFunctions";
 import { Record } from "./domain/record";
 import { FaRegEdit } from "react-icons/fa";
 import { IconContext } from "react-icons/lib";
@@ -48,6 +52,7 @@ export const MyRecord: FC = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    clearErrors,
   } = useForm<formInputs>();
 
   const onSubmit = async (data: any) => {
@@ -55,6 +60,12 @@ export const MyRecord: FC = () => {
     setRecords([...records, ...record]);
     onClose();
     reset();
+  };
+
+  const onClickDelete = async (id: string) => {
+    // await deleteRecord(id);;
+    setRecords(records.filter((record) => record.id !== id));
+    deleteRecord(id);
   };
 
   useEffect(() => {
@@ -80,7 +91,7 @@ export const MyRecord: FC = () => {
   ) : (
     <Box>
       <Center mt={10} mb={6} display={"flex"} flexDirection={"column"}>
-        <Heading as={"h1"} color={"orange"}>
+        <Heading as={"h1"} color={"orange"} data-testid="app-title">
           マイレコ
         </Heading>
       </Center>
@@ -108,12 +119,13 @@ export const MyRecord: FC = () => {
             xl: "50vw",
             "2xl": "40vw",
           }}
+          minH={"300px"}
           p={6}
           m={0}
           data-testid="my-records"
         >
-          {records.map((record) => (
-            <ListItem fontSize={"28px"} key={record.id}>
+          {records.map(({ id, title, time }) => (
+            <ListItem fontSize={"28px"} key={id}>
               <Flex alignItems={"center"} mb={4}>
                 <Flex alignItems={"center"}>
                   <Image
@@ -122,16 +134,17 @@ export const MyRecord: FC = () => {
                     w={"60px"}
                     borderRadius={"50%"}
                   />
-                  <Text>{record.title}</Text>
+                  <Text>{title}</Text>
                 </Flex>
                 <Spacer />
-                <Text mr={6}>{record.time}時間</Text>
+                <Text mr={6}>{time}時間</Text>
                 <IconContext.Provider value={{ size: "1.5em" }}>
                   <IconButton aria-label="edit" icon={<FaRegEdit />} />
                   <IconButton
                     aria-label="delete"
                     ml={4}
                     icon={<RiDeleteBin5Line />}
+                    onClick={() => onClickDelete(id)}
                   />
                 </IconContext.Provider>
               </Flex>
@@ -141,7 +154,13 @@ export const MyRecord: FC = () => {
         </UnorderedList>
       </Center>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          clearErrors();
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader display={"flex"} alignItems={"center"}>
@@ -175,8 +194,9 @@ export const MyRecord: FC = () => {
                 <Input
                   id="time"
                   placeholder="Time"
-                  {...register("time", { required: "時間の入力は必須です。" })}
-                  type="number"
+                  {...register("time", {
+                    required: "時間の入力は必須です。",
+                  })}
                   defaultValue={""}
                   autoComplete="off"
                   data-testid="time"
@@ -199,9 +219,6 @@ export const MyRecord: FC = () => {
               </Button>
               <Button onClick={() => reset()} ml={3}>
                 Reset
-              </Button>
-              <Button ml={3} onClick={onClose}>
-                Cancel
               </Button>
             </ModalFooter>
           </form>
