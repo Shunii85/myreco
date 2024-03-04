@@ -34,9 +34,8 @@ import {
   updateRecord,
 } from "./utils/supabaseFunctions";
 import { Record } from "./domain/record";
-import { FaRegEdit } from "react-icons/fa";
-import { IconContext } from "react-icons/lib";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 
 type formInputs = {
   title: string;
@@ -141,7 +140,8 @@ export const MyRecord: FC = () => {
           listStyleType={"none"}
           borderRadius={"1em"}
           w={{
-            base: "80vw",
+            base: "90vw",
+            // sm: "85vw",
             md: "70vw",
             lg: "60vw",
             xl: "50vw",
@@ -153,7 +153,7 @@ export const MyRecord: FC = () => {
           data-testid="my-records"
         >
           {records.map((record) => (
-            <ListItem fontSize={{ base: "16px", md: "24px" }} key={record.id}>
+            <ListItem key={record.id}>
               <Flex alignItems={"center"} mb={4}>
                 <Flex alignItems={"center"}>
                   <Image
@@ -162,25 +162,39 @@ export const MyRecord: FC = () => {
                     w={"60px"}
                     borderRadius={"50%"}
                   />
-                  <Text>{record.title}</Text>
+                  <Box whiteSpace={"unset"} w={"15vw"}>
+                    <Text
+                      overflowWrap={"break-word"}
+                      fontSize={{ base: "16px", md: "24px" }}
+                    >
+                      {record.title}
+                    </Text>
+                  </Box>
                 </Flex>
                 <Spacer />
-                <Text mr={6}>{record.time}時間</Text>
-                <IconContext.Provider value={{ size: "1.5em" }}>
-                  <IconButton
-                    aria-label="edit"
-                    icon={<FaRegEdit />}
-                    onClick={() => openEditModeModal(record)}
-                    data-testid="edit-button"
-                  />
-                  <IconButton
-                    aria-label="delete"
-                    ml={4}
-                    icon={<RiDeleteBin5Line />}
-                    onClick={() => onClickDelete(record.id)}
-                    data-testid="delete-button"
-                  />
-                </IconContext.Provider>
+                <Text
+                  mr={{ base: 3, md: 6 }}
+                  fontSize={{ base: "16px", md: "24px" }}
+                >
+                  {record.time}時間
+                </Text>
+                <IconButton
+                  aria-label="edit"
+                  icon={<EditIcon />}
+                  onClick={() => openEditModeModal(record)}
+                  data-testid="edit-button"
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "20px", md: "24px" }}
+                />
+                <IconButton
+                  aria-label="delete"
+                  ml={{ base: 2, md: 4 }}
+                  icon={<RiDeleteBin5Line />}
+                  onClick={() => onClickDelete(record.id)}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "20px", md: "24px" }}
+                  data-testid="delete-button"
+                />
               </Flex>
               <Divider />
             </ListItem>
