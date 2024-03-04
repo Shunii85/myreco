@@ -56,9 +56,8 @@ export const MyRecord: FC = () => {
   } = useForm<formInputs>();
 
   const onClickDelete = async (id: string) => {
-    // await deleteRecord(id);;
     setRecords(records.filter((record) => record.id !== id));
-    deleteRecord(id);
+    await deleteRecord(id);
   };
 
   const onSubmit = async (data: formInputs) => {
@@ -233,7 +232,15 @@ export const MyRecord: FC = () => {
                   placeholder="Title"
                   defaultValue={""}
                   autoComplete="off"
-                  {...register("title", { required: "内容の入力は必須です。" })}
+                  {...register("title", {
+                    required: "内容の入力は必須です。",
+                    // スペースの入力を禁止
+                    validate: (value) => {
+                      return (
+                        value.trim().length > 0 || "内容の入力は必須です。"
+                      );
+                    },
+                  })}
                   data-testid="title"
                 />
                 <FormErrorMessage data-testid="title-error">
