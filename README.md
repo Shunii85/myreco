@@ -1,30 +1,59 @@
-# React + TypeScript + Vite
+# Myreco
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+  <img src="./public/coverImage.jpg" />
+</p>
 
-Currently, two official plugins are available:
+#
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<br/>
 
-## Expanding the ESLint configuration
+## Summary
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+" Myreco " is, as the name suggests, a study record application. It is an application for users to record and manage the contents and time of their studies.
 
-- Configure the top-level `parserOptions` property like this:
+## Usage
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+1. プロジェクトをクローンします( https の場合 )。
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+   ```
+   git clone https://github.com/Shunii85/myreco
+   ```
+
+2. Move to the project directory
+
+   ```
+   cd myreco
+   ```
+
+3. Set the required url and key for supabase as environment variables. For local development, create a '.env ' file in the project root directory and set the following environment variables.
+
+   ```makefile
+   VITE_SUPABASE_URL='url'
+   VITE_SUPABASE_KEY='anon_key'
+   ```
+
+4. Install dependencies.
+
+   ```bash
+   npm install
+   ```
+
+5. Launch the application.
+   ```bash
+   npm run dev
+   ```
+
+## Specification
+
+1. When you start the application, a form for entering your study record will appear.
+2. Enter the content and time studied and click the "Register" button.
+3. The entered study record will be added to the list.
+4. Two buttons next to each study record allow deletion and editing.
+
+## Technology
+
+- react
+- typescript
+- jest
+- react testing library
