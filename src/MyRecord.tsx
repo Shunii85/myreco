@@ -35,7 +35,7 @@ import {
 } from "./utils/supabaseFunctions";
 import { Record } from "./domain/record";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { FiEdit } from "react-icons/fi";
 
 type formInputs = {
   title: string;
@@ -180,7 +180,7 @@ export const MyRecord: FC = () => {
                 </Text>
                 <IconButton
                   aria-label="edit"
-                  icon={<EditIcon />}
+                  icon={<FiEdit />}
                   onClick={() => openEditModeModal(record)}
                   data-testid="edit-button"
                   size={{ base: "sm", md: "md" }}
