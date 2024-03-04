@@ -14,7 +14,7 @@
 
 ## Usage
 
-1. プロジェクトをクローンします( https の場合 )。
+1. Clone the project (for https).
 
    ```
    git clone https://github.com/Shunii85/myreco
